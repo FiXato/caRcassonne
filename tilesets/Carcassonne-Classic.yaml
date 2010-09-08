@@ -15,9 +15,9 @@ tiles:
   north: &id002 
     - :city
   rotation: 0.0
-  south: 
+  south: :meadow
   type: :city
-  west: 
+  west: :meadow
 - !ruby/object:Tile 
   center: *id001
   east: :meadow
@@ -25,9 +25,9 @@ tiles:
   graphic_packed: 
   north: *id002
   rotation: 0.0
-  south: 
+  south: :meadow
   type: :city
-  west: 
+  west: :meadow 
 - !ruby/object:Tile 
   center: *id001
   east: :meadow
@@ -35,9 +35,9 @@ tiles:
   graphic_packed: 
   north: *id002
   rotation: 0.0
-  south: 
+  south: :meadow
   type: :city
-  west: 
+  west: :meadow
 - !ruby/object:Tile 
   center: *id001
   east: :meadow
@@ -45,9 +45,9 @@ tiles:
   graphic_packed: 
   north: *id002
   rotation: 0.0
-  south: 
+  south: :meadow
   type: :city
-  west: 
+  west: :meadow
 - !ruby/object:Tile 
   center: *id001
   east: :meadow
@@ -55,9 +55,9 @@ tiles:
   graphic_packed: 
   north: *id002
   rotation: 0.0
-  south: 
+  south: :meadow
   type: :city
-  west: 
+  west: :meadow
 - !ruby/object:Tile 
   center: 
   east: &id003 
