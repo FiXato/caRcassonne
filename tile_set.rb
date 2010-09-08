@@ -32,7 +32,6 @@ class TileSet
     File.open(filename,'w') { |file| YAML.dump(self, file) }
   end
 
-  #TODO: Marshal the images
   def pack!
     tiles.each do |tile|
       tile.graphic_packed = Marshal::dump(File.read(tile.graphic))
@@ -40,7 +39,6 @@ class TileSet
     nil
   end
 
-  #TODO: De-Marshal the images
   def unpack!(directory=nil)
     tiles.each do |tile|
       tile.graphic = File.join(directory,File.basename(tile.graphic)) if directory
@@ -63,5 +61,15 @@ class TileSet
 
   def get_tile
     shuffled_tiles.shift
+  end
+
+  #TODO: Validate all tiles to make sure each side of every tile is specified
+  def validate
+    tiles.each do |tile|
+      [:north,:south,:west,:east].each do |direction|
+        puts "#{tile.graphic}(#{tile.type}): #{direction} is missing" if tile.send(direction).nil?
+      end
+    end
+    nil
   end
 end
