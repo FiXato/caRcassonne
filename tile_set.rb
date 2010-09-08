@@ -27,6 +27,7 @@ class TileSet
   end
 
   def save!(clear_shuffled=true)
+    raise 'TileSet is not valid!' unless validate
     @shuffled_tiles = nil if clear_shuffled #Could be useful for saving a game-state
     FileUtils.mkdir_p(File.dirname(filename))
     File.open(filename,'w') { |file| YAML.dump(self, file) }
@@ -65,11 +66,15 @@ class TileSet
 
   #TODO: Validate all tiles to make sure each side of every tile is specified
   def validate
+    error = false
     tiles.each do |tile|
       [:north,:south,:west,:east].each do |direction|
-        puts "#{tile.graphic}(#{tile.type}): #{direction} is missing" if tile.send(direction).nil?
+        if tile.send(direction).nil?
+          error ||= true
+          puts "#{tile.graphic}(#{tile.type}): #{direction} is missing" 
+        end
       end
     end
-    nil
+    !error
   end
 end
