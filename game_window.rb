@@ -1,7 +1,8 @@
 require 'rubygems'
 require 'gosu'
+require "yaml"
 class GameWindow < Gosu::Window
-  attr_accessor :grid, :tile_width, :tile_height, :tile_set
+  attr_accessor :grid, :tile_width, :tile_height, :tile_set, :save_state_filename
   attr_reader :width, :height
 
   def initialize(caption="Gosu Application",width=800,height=600)
@@ -9,6 +10,7 @@ class GameWindow < Gosu::Window
     @width = width
     @height = height
     self.caption = caption
+    @save_state_filename = Time.now.strftime("%Y%m%d%H%M%S")+".yaml"
   end
 
   def update
@@ -51,6 +53,8 @@ class GameWindow < Gosu::Window
       puts 'Trying to place tile at %sx%s' % [@current_tile[:grid_x],@current_tile[:grid_y]]
       if @grid.place_tile(@current_tile[:tile],@current_tile[:grid_x],@current_tile[:grid_y])
         @current_tile = nil
+        save_state = {:grid => @grid, :tile_set => @tile_set}
+        File.open(@save_state_filename, "w") { |file| YAML.dump(save_state, file) }
       end
     end
   end
