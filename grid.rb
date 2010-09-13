@@ -98,7 +98,10 @@ class Grid
   
   def draw(window)
     tiles.each do |tile|
-      Gosu::Image.new(window, tile[2].graphic, false).draw_rot(tile[0] * window.tile_width + window.tile_width / 2,tile[1] * window.tile_height + window.tile_height / 2,0,tile[2].rotation)
+      unless tile[2].gosu_image
+        tile[2].gosu_image = Gosu::Image.new(window, tile[2].graphic, false)
+      end
+      tile[2].gosu_image.draw_rot(tile[0] * window.tile_width + window.tile_width / 2,tile[1] * window.tile_height + window.tile_height / 2,0,tile[2].rotation)
     end
   end
 end

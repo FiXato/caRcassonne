@@ -1,6 +1,6 @@
 require 'yaml'
 class Tile
-  attr_accessor :id, :type, :graphic, :north, :east, :south, :west, :center, :rotation, :multiplier, :graphic_packed
+  attr_accessor :id, :type, :graphic, :north, :east, :south, :west, :center, :rotation, :multiplier, :graphic_packed, :gosu_image
 
   def initialize(type=nil,graphic=nil)
     self.type = type
