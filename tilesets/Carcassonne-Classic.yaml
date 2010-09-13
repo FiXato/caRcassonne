@@ -9,55 +9,70 @@ tiles:
 - !ruby/object:Tile 
   center: &id001 
     - :meadow
-  east: :meadow
+  east:
+    - :meadow
   graphic: tilesets/Carcassonne-Classic-tiles/city1.png
   graphic_packed: 
   north: &id002 
     - :city
   rotation: 0.0
-  south: :meadow
+  south:
+    - :meadow
   type: :city
-  west: :meadow
+  west:
+    - :meadow
 - !ruby/object:Tile 
   center: *id001
-  east: :meadow
+  east:
+    - :meadow
   graphic: tilesets/Carcassonne-Classic-tiles/city1.png
   graphic_packed: 
   north: *id002
   rotation: 0.0
-  south: :meadow
+  south:
+    - :meadow
   type: :city
-  west: :meadow 
+  west:
+    - :meadow
 - !ruby/object:Tile 
   center: *id001
-  east: :meadow
+  east:
+    - :meadow
   graphic: tilesets/Carcassonne-Classic-tiles/city1.png
   graphic_packed: 
   north: *id002
   rotation: 0.0
-  south: :meadow
+  south:
+    - :meadow
   type: :city
-  west: :meadow
+  west:
+    - :meadow
 - !ruby/object:Tile 
   center: *id001
-  east: :meadow
+  east:
+    - :meadow
   graphic: tilesets/Carcassonne-Classic-tiles/city1.png
   graphic_packed: 
   north: *id002
   rotation: 0.0
-  south: :meadow
+  south:
+    - :meadow
   type: :city
-  west: :meadow
+  west:
+    - :meadow
 - !ruby/object:Tile 
   center: *id001
-  east: :meadow
+  east:
+    - :meadow
   graphic: tilesets/Carcassonne-Classic-tiles/city1.png
   graphic_packed: 
   north: *id002
   rotation: 0.0
-  south: :meadow
+  south:
+    - :meadow
   type: :city
-  west: :meadow
+  west: 
+    - :meadow
 - !ruby/object:Tile 
   center: 
   east: &id003 
