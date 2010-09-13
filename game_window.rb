@@ -11,9 +11,12 @@ class GameWindow < Gosu::Window
     @height = height
     self.caption = caption
     @save_state_filename = Time.now.strftime("%Y%m%d%H%M%S")+".yaml"
+    @ticks = 0
   end
 
   def update
+    @ticks += 1
+    return unless @ticks % 5 == 1
     @current_tile ||= {
       :tile => tile = tile_set.get_tile,
       :image => Gosu::Image.new(self, tile.graphic, true),
