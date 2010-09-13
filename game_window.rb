@@ -53,7 +53,9 @@ class GameWindow < Gosu::Window
       puts 'Trying to place tile at %sx%s' % [@current_tile[:grid_x],@current_tile[:grid_y]]
       if @grid.place_tile(@current_tile[:tile],@current_tile[:grid_x],@current_tile[:grid_y])
         @current_tile = nil
-        save_state = {:grid => @grid, :tile_set => @tile_set}
+        dup_grid = @grid.dup
+        dup_grid.tiles.each {|tile|tile[2].gosu_image = nil} #kill the gosu images, because they can't be imported.
+        save_state = {:grid => dup_grid, :tile_set => @tile_set}
         File.open(@save_state_filename, "w") { |file| YAML.dump(save_state, file) }
       end
     end
