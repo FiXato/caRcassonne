@@ -61,7 +61,12 @@ class TileSet
   end
 
   def get_tile
+    raise OutOfTilesException unless shuffled_tiles.size > 0
     shuffled_tiles.shift
+  end
+
+  def empty_tiles
+    @shuffled_tiles = []
   end
 
   #TODO: Validate all tiles to make sure each side of every tile is specified
@@ -78,3 +83,4 @@ class TileSet
     !error
   end
 end
+class OutOfTilesException < Exception;end

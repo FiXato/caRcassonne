@@ -62,6 +62,13 @@ class GameWindow < Gosu::Window
         File.open(@save_state_filename, "w") { |file| YAML.dump(save_state, file) }
       end
     end
+    if button_down? Gosu::Button::KbBackspace or button_down? Gosu::Button::GpButton2 then
+      @tile_set.empty_tiles
+      @current_tile = nil
+    end
+  rescue OutOfTilesException
+    puts "No more tiles available!"
+    @current_tile = nil
   end
 
   def draw
