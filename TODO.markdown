@@ -1,6 +1,26 @@
-=Todo
+#Todo
+******************************************************************************
 
------Phase 1: Tile & Meeple placement
+## Phase 0: Experiment with other GUI frameworks
+******************************************************************************
+
+* Frameworks to look at:
+  * Chingo (seems most interesting)
+  * GGLib (has some interesting buttons/selectionboxes perhaps)
+
+## Phase 1: Create custom tileset
+
+* Create graphics that will be released under Creative-Commons Non-Commercial, Share-Alike, Attribution
+* Add TileEditor
+  * Show all tiles from the default tileset
+  * Select tiles to change their graphic and possibly properties
+  * Allow adding tiles
+  * Allow getting blank tiles from graphics in a directory
+  * Allow saving TileSet to a packed TileSet YAML
+* Create Carcassonne Classic TileSet with aforementioned graphics
+
+## Phase 2: Tile & Meeple placement
+******************************************************************************
 
 * Add turns
 
@@ -15,7 +35,8 @@
   * Check if a road ends -> return the meeple and add score
   * Check if a city is completed -> return the meeple and add score
 
------Phase 2: Scoring
+## Phase 3: Scoring
+******************************************************************************
 
 * Add simple scoreboard (just simple counters)
 * Add complex scoreboard (moving meeples over a scoring board)
@@ -27,7 +48,8 @@
   * Count meadows with meeples on them and finished cities along them (only award points to the player(s) with most meeples on them)
   
 
------Phase 3: Online Multiplayer
+## Phase 4: Online Multiplayer
+******************************************************************************
 
 * Allow creation of a game with a game id (and possibly password)
 
