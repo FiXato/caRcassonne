@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+require 'tile_editor'
+if ARGV.size > 0
+  tileset_name = ARGV.shift
+else
+  tileset_name = 'Carcassonne-Classic'
+end
+tile_set = TileSet.load(tileset_name)
+tile_width = tile_set.tile_dimensions[0]
+tile_height = tile_set.tile_dimensions[1]
+playing_field_width = (4*tile_width)
+playing_field_height = (5*tile_height)
+@window = TileEditor.new("caRcassonne Tile Editor",playing_field_width+(4*tile_width),playing_field_height+tile_height)
+@window.set_background("resources/backgrounds/grey_outline.png")
+@window.tile_set = tile_set
+@window.tile_set.uniq_shuffled_tiles!
+@window.tile_width = tile_width
+@window.tile_height = tile_height
+@window.grid = Grid.new
+@window.grid.max_x = playing_field_width / @window.tile_width
+@window.grid.max_y = playing_field_height / @window.tile_height
+puts "defined grid as #{@window.grid.max_x} by #{@window.grid.max_y}"
+cur_x = 0
+cur_y = 0
+begin
+  (1..@window.tile_set.shuffled_tiles.size).each do |idx|
+    tile = @window.tile_set.get_tile
+    @window.grid.place_tile(tile,
+      cur_x,
+      cur_y,
+    true)
+    cur_x += 1
+    if cur_x > (@window.grid.max_x-1)
+      cur_x = 0
+      cur_y += 1
+    end
+  end
+rescue OutOfTilesException
+end
+@window.show
