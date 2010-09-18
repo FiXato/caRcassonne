@@ -4,13 +4,18 @@ require 'tile'
 require 'tile_set'
 require 'grid'
 require 'game_window'
+if ARGV.size > 0
+  tileset_name = ARGV.shift
+else
+  tileset_name = 'Carcassonne-Classic'
+end
 @savestate = YAML.load_file(ARGV.shift) if ARGV.size > 0
 @window = GameWindow.new("caRcassonne",800,800)
-@window.set_background("tilesets/background.png")
+@window.set_background("resources/backgrounds/grey_outline.png")
 if @savestate
   @window.tile_set = @savestate[:tile_set]
 else
-  @window.tile_set = TileSet.load('Carcassonne-Classic')
+  @window.tile_set = TileSet.load(tileset_name)
 end
 @window.tile_width = @window.tile_set.tile_dimensions[0]
 @window.tile_height = @window.tile_set.tile_dimensions[1]
