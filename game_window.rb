@@ -10,7 +10,7 @@ class GameWindow < Gosu::Window
     @width = width
     @height = height
     self.caption = caption
-    @save_state_filename = Time.now.strftime("%Y%m%d%H%M%S")+".yaml"
+    @save_state_filename = File.expand_path(File.join("savestates",Time.now.strftime("%Y%m%d%H%M%S")+".yaml"))
     @ticks = 0
   end
 
