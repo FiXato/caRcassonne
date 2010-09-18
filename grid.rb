@@ -31,7 +31,11 @@ class Grid
     place_tile(starting_tile,max_x/2,max_y/2) if starting_tile
   end
 
-  def place_tile(tile,x,y)
+  def place_tile(tile,x,y,force=false)
+    if force
+      self.tiles << [x,y,tile]
+      return true
+    end
     return false if has_tile?(x,y)
     #check north:
     unless tiles_compatible?(tile,north_tile = self.tile(x,y-1),:north)
