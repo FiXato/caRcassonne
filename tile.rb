@@ -22,4 +22,15 @@ class Tile
     self.rotation += 90
     self
   end
+
+  # Simply delegate to == in this example.
+  def eql?(comparee)
+    self == comparee
+  end
+
+  # Objects are equal if they have the same
+  # directions
+  def ==(comparee)
+    self.north == comparee.north && self.east == comparee.east && self.west == comparee.west && self.south == comparee.south && self.center == comparee.center && self.multiplier == comparee.multiplier && self.type == comparee.type
+  end
 end
