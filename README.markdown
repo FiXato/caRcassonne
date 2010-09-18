@@ -10,17 +10,28 @@ boardgame generator/client.
 ******************************************************************************
 
 ### From Git:
-`git clone git://github.com/FiXato/caRcassonne.git && cd caRcassonne && rake install`
+* `gem install gosu`
+* `git clone git://github.com/FiXato/caRcassonne.git && cd caRcassonne`
+
+Installation is not available yet.
 
 ### From RubyForge/GemCutter:
-`gem install caRcassonne`
+
+Not available yet
 
 
 ## Usage
 ******************************************************************************
 
-./carcassonne                     # Starts a new game
-./carcassonne 20100909004744.yaml # Starts caRcassonne and loads savestate.
+### Start a new game using the Original-Carcassonne-Classic tileset:
+
+`./carcassonne.rb Original-Carcassonne-Classic`
+
+### Start a new game using the O.C.C. tileset and continue from savestate:
+`./carcassonne.rb Original-Carcassonne-Classic 20100909004744.yaml`
+
+### NOTES:
+The original tile set is not included, but in the near future a custom default tileset will be included.
 
 
 ### Commandline Arguments
@@ -28,11 +39,12 @@ boardgame generator/client.
 Currently `carcassonne` supports no command-line arguments. 
 In the future it might support:
 
-* --load-savestate         => Load specified savestate
-* --load-tileset <tileset> => Set tileset as active tileset
-* --version                => Return the current VERSION of caRcassonne
+* --load-savestate          => Load specified savestate
+* --load-tileset <tile set> => Set tile set as active tileset
+* --version                 => Return the current VERSION of caRcassonne
 
-By default only fatal errors will be output via STDOUT.
+By default all debug info and errors will be output via STDOUT.
+
 However, the following command-line arguments will in the future be available
  to set the verbosity:
 
@@ -44,7 +56,7 @@ However, the following command-line arguments will in the future be available
 ### Examples
 
 Simplest way to run it would usually be:
-`./carcassonne`
+`./carcassonne.rb Original-Carcassonne-Classic`
 
 
 ## ToDo
