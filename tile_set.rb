@@ -69,6 +69,16 @@ class TileSet
     @shuffled_tiles = []
   end
 
+  def uniq_shuffled_tiles!
+    uniq_tiles = []
+    shuffled_tiles.each do |tile|
+      unless uniq_tiles.include?(tile)
+        uniq_tiles << tile
+      end
+    end
+    @shuffled_tiles = uniq_tiles
+  end
+
   #TODO: Validate all tiles to make sure each side of every tile is specified
   def validate
     error = false
