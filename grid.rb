@@ -1,5 +1,10 @@
 require 'yaml'
 require 'tile'
+class Array
+  def road?
+    self.include?(:road)
+  end
+end
 class Grid
   attr_accessor :max_x, :max_y, :tiles, :tile_images, :starting_tile, :offset
   #, :tile_width, :tile_height
@@ -12,19 +17,18 @@ class Grid
   end
   
   def draw_text
-    print '    '
-    (0..max_x).each do |x|
-      print '%i ' % x
-    end
-    puts
-    puts '   %s' % ('-' * (max_x * 2 + 3))
     (0..max_y).each do |y|
-      letter = (y + 10)
-      print '%s | ' % letter.to_s(26)
-      (0..max_x).each do |x|
-        print '%s ' % tile_graphic(x,y)
+      #get all graphics for this row
+      graphs = (0..max_x).map do |x|
+        tile_graphic(x,y)
       end
-      puts 
+      #Print all graphs line by line.
+      (0..2).each do |graph_line|
+        graphs.each do |graph|
+          print graph[graph_line]
+        end
+        print "\n"
+      end
     end
   end
 
@@ -44,26 +48,26 @@ class Grid
     return false if has_tile?(x,y)
     #check north:
     unless tiles_compatible?(tile,north_tile = self.tile(x,y-1),:north)
-      puts "north incompatible"
+      # puts "north incompatible"
       return false
     end
     #check south:
     unless tiles_compatible?(tile,south_tile = self.tile(x,y+1),:south)
-      puts "south incompatible"
+      # puts "south incompatible"
       return false
     end
     #check east:
     unless tiles_compatible?(tile,east_tile = self.tile(x+1,y),:east)
-      puts "east incompatible"
+      # puts "east incompatible"
       return false
     end
     #check west:
     unless tiles_compatible?(tile,west_tile = self.tile(x-1,y),:west)
-      puts "west incompatible"
+      # puts "west incompatible"
       return false
     end
     if [north_tile,south_tile,east_tile,west_tile].compact == [] #has to be attached to at least 1 tile
-      puts "No tile to connect to"
+      # puts "No tile to connect to"
       return false
     end
     place_tile!(tile,x,y)
@@ -74,16 +78,16 @@ class Grid
     return true if tile_b.nil?
     case orientation
     when :north
-      puts "#{tile_a.north} == #{tile_b.south}"
+      # puts "#{tile_a.north} == #{tile_b.south}"
       tile_a.north == tile_b.south
     when :south
-      puts "#{tile_a.south} == #{tile_b.north}"
+      # puts "#{tile_a.south} == #{tile_b.north}"
       tile_a.south == tile_b.north
     when :east
-      puts "#{tile_a.east} == #{tile_b.west}"
+      # puts "#{tile_a.east} == #{tile_b.west}"
       tile_a.east == tile_b.west
     when :west
-      puts "#{tile_a.west} == #{tile_b.east}"
+      # puts "#{tile_a.west} == #{tile_b.east}"
       tile_a.west == tile_b.east
     end
   end
@@ -94,15 +98,93 @@ class Grid
   end
 
   def tile(x,y)
-    puts "requesting tile at #{x},#{y}"
+    # puts "requesting tile at #{x},#{y}"
     tile = tiles.find{|tile| tile[0] == x && tile[1] == y}
-    puts "Tile found: #{tile.to_yaml}" unless tile.nil?
+    # puts "Tile found: #{tile.to_yaml}" unless tile.nil?
     return nil if tile.nil?
     return tile[2]
   end
 
   def tile_graphic(x,y)
-    has_tile?(x,y) ? 'x' : '-'
+    grass = '.'
+    city = '#'
+    monastery = '⌂'
+    empty = ' '
+    unless tile = tile(x,y)
+      return [[empty, empty, empty],[empty, empty, empty],[empty, empty, empty]]
+    end
+    graph = []
+    if tile.north.road?
+      graph << [grass,'║',grass]
+    elsif tile.north == [:city]
+      graph << [city,city,city]
+    else
+      graph << [grass,grass,grass]
+    end
+
+    middle_graph = []
+    if tile.west == [:city]
+      middle_graph << city
+    elsif tile.west.road?
+      middle_graph << '═'
+    else
+      middle_graph << grass
+    end
+
+    if tile.center == :monastery
+      middle_graph << monastery
+    elsif tile.center == :city
+        middle_graph << city
+
+    #Four road exits
+    elsif tile.north.road? && tile.west.road? && tile.south.road? && tile.east.road?
+      middle_graph << '╬'
+
+    #Three road exits
+    elsif tile.north.road? && tile.west.road? && tile.south.road? && !tile.east.road?
+      middle_graph << '╣'
+    elsif tile.north.road? && tile.west.road? && !tile.south.road? && tile.east.road?
+      middle_graph << '╩'
+    elsif tile.north.road? && !tile.west.road? && tile.south.road? && tile.east.road?
+      middle_graph << '╠'
+    elsif !tile.north.road? && tile.west.road? && tile.south.road? && tile.east.road?
+      middle_graph << '╦'
+
+
+    #Two road exits
+    elsif tile.north.road? && tile.west.road? && !tile.south.road? && !tile.east.road?
+      middle_graph << '╝'
+    elsif tile.north.road? && !tile.west.road? && !tile.south.road? && tile.east.road?
+      middle_graph << '╚'
+    elsif !tile.north.road? && !tile.west.road? && tile.south.road? && tile.east.road?
+      middle_graph << '╔'
+    elsif !tile.north.road? && tile.west.road? && tile.south.road? && !tile.east.road?
+      middle_graph << '╗'
+    elsif tile.north.road? && !tile.west.road? && tile.south.road? && !tile.east.road?
+      middle_graph << '║'
+    elsif !tile.north.road? && tile.west.road? && !tile.south.road? && tile.east.road?
+      middle_graph << '═'
+    else
+      middle_graph << grass
+    end
+
+    if tile.east == [:city]
+      middle_graph << city
+    elsif tile.east.road?
+      middle_graph << '═'
+    else
+      middle_graph << grass
+    end
+    graph << middle_graph
+
+    if tile.south == [:meadow, :road]
+      graph << [grass,'║',grass]
+    elsif tile.south == [:city]
+      graph << [city,city,city]
+    else
+      graph << [grass,grass,grass]
+    end
+    graph
   end
   
   def draw(window)

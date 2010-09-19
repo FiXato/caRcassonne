@@ -82,7 +82,7 @@ class GameWindow < Gosu::Window
         end
       end
     end
-    @grid.draw(self) if @grid
+    grid.draw(self)
     @current_tile[:image].draw_rot(@current_tile[:grid_x] * tile_width + tile_width/2,@current_tile[:grid_y] * tile_height + tile_height/2,0,@current_tile[:tile].rotation) if @current_tile
   end
   

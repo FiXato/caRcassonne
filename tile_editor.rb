@@ -159,7 +159,8 @@ class TileEditorStateObj < GGLib::StateObject
         end
       end
     end
-    grid.draw($window) if grid
+    grid.draw($window)
+    grid.draw_text
     grid2.draw($window) if grid2
     @current_tile[:image].draw_rot(@current_tile[:grid_x] * tile_width + 50,@current_tile[:grid_y] * tile_height + 50,0,0) if @current_tile
   end

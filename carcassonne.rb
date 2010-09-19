@@ -31,4 +31,5 @@ else
   @window.grid.place_starting_tile
   puts @window.grid.to_yaml
 end
+@window.grid.draw_text
 @window.show
