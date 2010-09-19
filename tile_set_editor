@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-require 'tile_editor'
+require 'tile_set_editor'
 if ARGV.size > 0
   tile_set_name = ARGV.shift
 else
@@ -11,6 +11,6 @@ config = {
   :board_max_tiles_y => 6,
 }
 
-@tile_editor = TileEditor.new("caRcassonne Tile Editor",config)
-puts "defined grid as #{@tile_editor.grid.max_x} by #{@tile_editor.grid.max_y}"
-@tile_editor.show
+@tile_set_editor = TileSetEditor.new("caRcassonne TileSetEditor",config)
+puts "defined grid as #{@tile_set_editor.grid.max_x} by #{@tile_set_editor.grid.max_y}"
+@tile_set_editor.show

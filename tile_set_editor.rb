@@ -7,7 +7,7 @@ require "gglib"
 require "ext/widgets"
 require "ext/themes"
 require "yaml"
-class TileEditor < GGLib::GUIWindow
+class TileSetEditor < GGLib::GUIWindow
   attr_accessor :grid, :grid2, :tile_width, :tile_height, :tile_set, :tile_set_name, :board_max_tiles_x, :board_max_tiles_y, :ticks
   attr_reader :width, :height
 
@@ -32,7 +32,7 @@ class TileEditor < GGLib::GUIWindow
 
     super(board_width + (5*tile_width), board_height + (2 * tile_height), false)
     self.caption = caption
-    self.state = TileEditorStateObj.new
+    self.state = TileSetEditorStateObj.new
     self.add_all_tiles_to_grid
   end
 
@@ -61,7 +61,7 @@ class TileEditor < GGLib::GUIWindow
   rescue OutOfTilesException
   end
 end
-class TileEditorStateObj < GGLib::StateObject
+class TileSetEditorStateObj < GGLib::StateObject
   attr_accessor :tile_set, :tile_width, :tile_height
   def initialize
     @tile_set = $window.tile_set
@@ -169,7 +169,7 @@ class TileEditorStateObj < GGLib::StateObject
   end
 
   def onStart
-    puts "TileEditorStateObj activated."
+    puts "TileSetEditorStateObj activated."
     # $window.setBackground("resources/backgrounds/grey_outline.png")
     @txt = {}
     @btn = {}
@@ -211,6 +211,6 @@ class TileEditorStateObj < GGLib::StateObject
   #if you modified anything other than the window, this is where you
   #should clean it up.
   def onEnd
-    puts "TileEditorStateObj terminated."
+    puts "TileSetEditorStateObj terminated."
   end
 end
