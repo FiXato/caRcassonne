@@ -28,9 +28,9 @@ class TileEditor < GGLib::GUIWindow
     self.grid2 = Grid.new
     self.grid2.max_x = board_width / tile_width
     self.grid2.max_y = board_height / tile_height
-    self.grid2.offset = {:x => board_width+10, :y => 210}
+    self.grid2.offset = {:x => board_width+10, :y => 0}
 
-    super(board_width + (5*tile_width), board_height + tile_height, false)
+    super(board_width + (5*tile_width), board_height + (2 * tile_height), false)
     self.caption = caption
     self.state = TileEditorStateObj.new
     self.add_all_tiles_to_grid
@@ -173,19 +173,25 @@ class TileEditorStateObj < GGLib::StateObject
     # $window.setBackground("resources/backgrounds/grey_outline.png")
     @txt = {}
     @btn = {}
-    @txt[:tileset_name] = GGLib::TextBox.new("TileSetName", $window.board_width, 0, 100, GGLib::Themes::Shade,300,50)
+    @txt[:north]  = GGLib::TextBox.new("TileYaml", 150, 0  + $window.board_height, 100, GGLib::Themes::Shade,150,50)
+    @txt[:south]  = GGLib::TextBox.new("TileYaml", 150, 100 + $window.board_height, 100, GGLib::Themes::Shade,150,50)
+    @txt[:west]   = GGLib::TextBox.new("TileYaml", 0,   50  + $window.board_height, 100, GGLib::Themes::Shade,150,50)
+    @txt[:east]   = GGLib::TextBox.new("TileYaml", 300, 50  + $window.board_height, 100, GGLib::Themes::Shade,150,50)
+    @txt[:center] = GGLib::TextBox.new("TileYaml", 150, 50  + $window.board_height, 100, GGLib::Themes::Shade,150,50)
+    @txt[:tileset_name] = GGLib::TextBox.new("TileSetName", $window.board_width, $window.board_height, 100, GGLib::Themes::Shade,300,50)
     @txt[:tileset_name].text = $window.tile_set_name
-    @txt[:north] = GGLib::TextBox.new("TileYaml", $window.board_width + 150, 50, 100, GGLib::Themes::Shade,150,50)
-    @txt[:south] = GGLib::TextBox.new("TileYaml", $window.board_width + 150, 150, 100, GGLib::Themes::Shade,150,50)
-    @txt[:west] = GGLib::TextBox.new("TileYaml", $window.board_width, 100, 100, GGLib::Themes::Shade,150,50)
-    @txt[:east] = GGLib::TextBox.new("TileYaml", $window.board_width + 300, 100, 100, GGLib::Themes::Shade,150,50)
-    @txt[:center] = GGLib::TextBox.new("TileYaml", $window.board_width + 150, 100, 100, GGLib::Themes::Shade,150,50)
-    @btn[:dirs] = []
+    @btn[:dirs]   = []
     Dir.glob("resources/tiles/*/").each_with_index do |dir,idx|
-      @btn[:dirs] << GGLib::Button.new("btnDir#{dir}", File.basename(dir), 100, $window.board_height + 25 + (idx * 25), Proc.new{ |widget| dirname = File.join(dir,'*.png').gsub("[","\\[").gsub("]", "\\]");@tile_images = Dir.glob(dirname);add_tile_images }, GGLib::Themes::Shade,200)
+      @btn[:dirs] << GGLib::Button.new("btnDir#{dir}", 
+      File.basename(dir), 
+      $window.board_width, 
+      $window.board_height + 60 + (idx * 25), 
+      Proc.new{ |widget| dirname = File.join(dir,'*.png').gsub("[","\\[").gsub("]", "\\]");@tile_images = Dir.glob(dirname);add_tile_images }, 
+      GGLib::Themes::Shade,
+      300)
     end
     # GGLib::Button.new("button1", "Save", $window.board_width, 450, Proc.new{ |widget| $txt_tileset_name.text = "Not working yet" }, GGLib::Themes::Shade)
-    GGLib::Button.new("button2", "Exit", 0, $window.board_height, Proc.new{ |widget| $window.close; exit }, GGLib::Themes::Shade)
+    GGLib::Button.new("button2", "Exit", $window.board_width + 300, $window.board_height, Proc.new{ |widget| $window.close; exit }, GGLib::Themes::Shade)
   end
 
   def add_tile_images
