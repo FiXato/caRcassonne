@@ -60,6 +60,7 @@ class GameWindow < Gosu::Window
         dup_grid.tiles.each {|tile|tile[2].gosu_image = nil} #kill the gosu images, because they can't be imported.
         save_state = {:grid => dup_grid, :tile_set => @tile_set}
         File.open(@save_state_filename, "w") { |file| YAML.dump(save_state, file) }
+        grid.draw_text
       end
     end
     if button_down? Gosu::Button::KbBackspace or button_down? Gosu::Button::GpButton2 then
