@@ -7,6 +7,8 @@
 * Frameworks to look at:
   * Chingo (seems most interesting)
   * GGLib (has some interesting buttons/selectionboxes perhaps)
+    * It feels a bit bulky.. especially with the StateObj..
+    * Textboxes/Buttons are useful, but I had to monkeypatch GGLib to get things fully working..
 
 ## Phase 1: Create custom tileset
 
