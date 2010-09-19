@@ -7,8 +7,8 @@ else
 end
 config = {
   :tile_set_name => tile_set_name,
-  :board_max_tiles_x => 4,
-  :board_max_tiles_y => 5,
+  :board_max_tiles_x => 5,
+  :board_max_tiles_y => 6,
 }
 
 @tile_editor = TileEditor.new("caRcassonne Tile Editor",config)

@@ -1,13 +1,14 @@
 require 'yaml'
 require 'tile'
 class Grid
-  attr_accessor :max_x, :max_y, :tiles, :tile_images, :starting_tile
+  attr_accessor :max_x, :max_y, :tiles, :tile_images, :starting_tile, :offset
   #, :tile_width, :tile_height
   def initialize
     self.tiles = []
     self.tile_images = []
     self.max_x = 10
     self.max_y = 10
+    self.offset = {:x => 0, :y => 0}
   end
   
   def draw_text
@@ -28,14 +29,18 @@ class Grid
   end
 
   def place_starting_tile
-    place_tile(starting_tile,max_x/2,max_y/2) if starting_tile
+    place_tile!(starting_tile,max_x/2,max_y/2) if starting_tile
   end
 
-  def place_tile(tile,x,y,force=false)
-    if force
-      self.tiles << [x,y,tile]
-      return true
-    end
+  # Place tile without checking if it is a valid tile position
+  def place_tile!(tile,x,y)
+    self.tiles << [x,y,tile]
+  end
+
+  # Check if the tile is in a valid tile position, a.k.a. placeable, and then place it
+  # Returns true on success and false upon failure
+  def place_tile(tile,x,y)
+    return false if x > max_x || y > max_y
     return false if has_tile?(x,y)
     #check north:
     unless tiles_compatible?(tile,north_tile = self.tile(x,y-1),:north)
@@ -57,11 +62,11 @@ class Grid
       puts "west incompatible"
       return false
     end
-    if tiles.size > 0 && [north_tile,south_tile,east_tile,west_tile].compact == [] #has to be attached to at least 1 tile
+    if [north_tile,south_tile,east_tile,west_tile].compact == [] #has to be attached to at least 1 tile
       puts "No tile to connect to"
       return false
     end
-    self.tiles << [x,y,tile]
+    place_tile!(tile,x,y)
     return true
   end
 
@@ -105,7 +110,11 @@ class Grid
       unless tile[2].gosu_image
         tile[2].gosu_image = Gosu::Image.new(window, tile[2].graphic, false)
       end
-      tile[2].gosu_image.draw_rot(tile[0] * window.tile_width + window.tile_width / 2,tile[1] * window.tile_height + window.tile_height / 2,0,tile[2].rotation)
+      x = tile[0] * window.tile_width + window.tile_width / 2
+      x += offset[:x]
+      y = tile[1] * window.tile_height + window.tile_height / 2
+      y += offset[:y]
+      tile[2].gosu_image.draw_rot(x,y,0,tile[2].rotation)
     end
   end
 end
