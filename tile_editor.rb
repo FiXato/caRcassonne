@@ -97,8 +97,6 @@ class TileEditorStateObj < GGLib::StateObject
       unless @current_tile[:grid_y] == 0
         @current_tile[:grid_y] -= 1
       end
-    when Gosu::Button::KbSpace, Gosu::Button::GpButton0
-      @current_tile[:tile].rotate_clockwise
     when Gosu::Button::KbReturn, Gosu::Button::GpButton1
       puts 'Trying to select tile at %sx%s' % [@current_tile[:grid_x],@current_tile[:grid_y]]
       if @grid.has_tile?(@current_tile[:grid_x],@current_tile[:grid_y])
@@ -109,9 +107,6 @@ class TileEditorStateObj < GGLib::StateObject
         $txt_east.text = @selected_tile.east.join(", ") if @selected_tile.kind_of?(Tile)
         $txt_center.text = @selected_tile.center.to_s if @selected_tile.kind_of?(Tile)
       end
-    when Gosu::Button::KbBackspace, Gosu::Button::GpButton2
-      @tile_set.empty_tiles
-      @current_tile = nil
     end
   end
 
