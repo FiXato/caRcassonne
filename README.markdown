@@ -13,6 +13,10 @@ boardgame generator/client.
 * `gem install gosu`
 * `git clone git://github.com/FiXato/caRcassonne.git && cd caRcassonne`
 
+And if you want to run the TileEditor, you also need GGLib for now:
+
+* `gem install gglib`
+
 Installation is not available yet.
 
 ### From RubyForge/GemCutter:
@@ -23,15 +27,17 @@ Not available yet
 ## Usage
 ******************************************************************************
 
-### Start a new game using the Original-Carcassonne-Classic tileset:
-
+### Start a new game using the Original-Carcassonne-Classic tile set:
 `./carcassonne.rb Original-Carcassonne-Classic`
 
-### Start a new game using the O.C.C. tileset and continue from savestate:
+### Start a new game using the O.C.C. tile set and continue from savestate:
 `./carcassonne.rb Original-Carcassonne-Classic 20100909004744.yaml`
 
+### Start the TileEditor using the Original-Carcassonne-Classic tile set:
+`./tile_editor Original-Carcassonne-Classic`
+
 ### NOTES:
-The original tile set is not included, but in the near future a custom default tileset will be included.
+The original tile set is not included, but in the near future a custom default tile set will be included.
 
 
 ### Commandline Arguments
@@ -61,7 +67,7 @@ Simplest way to run it would usually be:
 
 ## ToDo
 ******************************************************************************
-See the todo.markdown file.
+See the TODO.markdown file.
 
 ## Notes on Patches/Pull Requests
 ******************************************************************************
