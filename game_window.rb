@@ -39,6 +39,8 @@ class GameWindow < Gosu::Window
     end
     if button_down? Gosu::Button::KbSpace or button_down? Gosu::Button::GpButton0 or button_down? Gosu::Button::MsRight then
       current_tile[:tile].rotate_clockwise
+      puts "Rotated tile clockwise:"
+      current_tile[:tile].draw_graphs
     end
     if button_down? Gosu::Button::KbReturn or button_down? Gosu::Button::GpButton1 or button_down? Gosu::Button::MsLeft then
       puts 'Trying to place tile at %sx%s' % [current_tile[:grid_x],current_tile[:grid_y]]
@@ -67,7 +69,16 @@ class GameWindow < Gosu::Window
       end
     end
     grid.draw(self)
-    current_tile[:image].draw_rot(current_tile[:grid_x] * tile_width + tile_width/2,current_tile[:grid_y] * tile_height + tile_height/2,0,current_tile[:tile].rotation) if current_tile
+    draw_current_tile
+  rescue OutOfTilesException
+    puts "No more tiles available!" unless @game_ended
+    end_game
+  end
+
+  def draw_current_tile
+    x = current_tile[:grid_x] * tile_width + tile_width/2
+    y = current_tile[:grid_y] * tile_height + tile_height/2
+    current_tile[:image].draw_rot(x,y,0,current_tile[:tile].rotation) if current_tile
   end
   
   def set_background(filename)
@@ -75,8 +86,15 @@ class GameWindow < Gosu::Window
   end
 
   def current_tile
-    @current_tile ||= {
-      :tile => tile = tile_set.get_tile,
+    @current_tile ||= get_current_tile
+  end
+
+  def get_current_tile
+    tile = tile_set.get_tile
+    puts "New tile taken from stack: "
+    tile.draw_graphs
+    {
+      :tile => tile,
       :image => Gosu::Image.new(self, tile.graphic, true),
       :grid_x => 0,
       :grid_y => 0,

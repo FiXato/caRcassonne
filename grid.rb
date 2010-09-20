@@ -1,10 +1,5 @@
 require 'yaml'
 require 'tile'
-class Array
-  def road?
-    self.include?(:road)
-  end
-end
 class Grid
   attr_accessor :max_x, :max_y, :tiles, :tile_images, :starting_tile, :offset
   #, :tile_width, :tile_height
@@ -17,6 +12,7 @@ class Grid
   end
   
   def draw_text
+    empty = ' '
     print ' ' * 3
     (0..max_x).each do |x|
       print ' %s ' % x.to_s(26)
@@ -25,7 +21,7 @@ class Grid
     (0..max_y).each do |y|
       #get all graphics for this row
       graphs = (0..max_x).map do |x|
-        tile_graphic(x,y)
+        tile(x,y).to_graphs rescue [[empty, empty, empty],[empty, empty, empty],[empty, empty, empty]]
       end
       #Print all graphs line by line.
       (0..2).each do |graph_line|
@@ -112,88 +108,6 @@ class Grid
     return tile[2]
   end
 
-  def tile_graphic(x,y)
-    grass = '.'
-    city = '#'
-    monastery = '⌂'
-    empty = ' '
-    unless tile = tile(x,y)
-      return [[empty, empty, empty],[empty, empty, empty],[empty, empty, empty]]
-    end
-    graph = []
-    if tile.north.road?
-      graph << [grass,'║',grass]
-    elsif tile.north == [:city]
-      graph << [city,city,city]
-    else
-      graph << [grass,grass,grass]
-    end
-
-    middle_graph = []
-    if tile.west == [:city]
-      middle_graph << city
-    elsif tile.west.road?
-      middle_graph << '═'
-    else
-      middle_graph << grass
-    end
-
-    if tile.center == :monastery
-      middle_graph << monastery
-    elsif tile.center == :city
-        middle_graph << city
-
-    #Four road exits
-    elsif tile.north.road? && tile.west.road? && tile.south.road? && tile.east.road?
-      middle_graph << '╬'
-
-    #Three road exits
-    elsif tile.north.road? && tile.west.road? && tile.south.road? && !tile.east.road?
-      middle_graph << '╣'
-    elsif tile.north.road? && tile.west.road? && !tile.south.road? && tile.east.road?
-      middle_graph << '╩'
-    elsif tile.north.road? && !tile.west.road? && tile.south.road? && tile.east.road?
-      middle_graph << '╠'
-    elsif !tile.north.road? && tile.west.road? && tile.south.road? && tile.east.road?
-      middle_graph << '╦'
-
-
-    #Two road exits
-    elsif tile.north.road? && tile.west.road? && !tile.south.road? && !tile.east.road?
-      middle_graph << '╝'
-    elsif tile.north.road? && !tile.west.road? && !tile.south.road? && tile.east.road?
-      middle_graph << '╚'
-    elsif !tile.north.road? && !tile.west.road? && tile.south.road? && tile.east.road?
-      middle_graph << '╔'
-    elsif !tile.north.road? && tile.west.road? && tile.south.road? && !tile.east.road?
-      middle_graph << '╗'
-    elsif tile.north.road? && !tile.west.road? && tile.south.road? && !tile.east.road?
-      middle_graph << '║'
-    elsif !tile.north.road? && tile.west.road? && !tile.south.road? && tile.east.road?
-      middle_graph << '═'
-    else
-      middle_graph << grass
-    end
-
-    if tile.east == [:city]
-      middle_graph << city
-    elsif tile.east.road?
-      middle_graph << '═'
-    else
-      middle_graph << grass
-    end
-    graph << middle_graph
-
-    if tile.south == [:meadow, :road]
-      graph << [grass,'║',grass]
-    elsif tile.south == [:city]
-      graph << [city,city,city]
-    else
-      graph << [grass,grass,grass]
-    end
-    graph
-  end
-  
   def draw(window)
     tiles.each do |tile|
       unless tile[2].gosu_image
