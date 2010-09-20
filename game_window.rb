@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'gosu'
+require 'player'
 require "yaml"
 class GameWindow < Gosu::Window
   attr_accessor :grid, :tile_width, :tile_height, :tile_set, :save_state_filename, :players, :turn
@@ -28,6 +29,10 @@ class GameWindow < Gosu::Window
       0xff008888,
       0xffff8c00
     ]
+  end
+
+  def add_player(name)
+    self.players << Player.new(name)
   end
 
   def players_texts
@@ -90,10 +95,11 @@ class GameWindow < Gosu::Window
     end
     grid.draw(self)
     draw_current_tile
-    text = "Turn #{turn}, #{players[turn % players.size]}'s move: " if players.size > 0
+    text = "Turn #{turn}, #{players[turn % players.size].name}'s move: " if players.size > 0
     @turn_text.draw(text, 0, height + 10, 0, 1, 1, 0xffffffff)
     players_texts.each_with_index do |font,idx|
-      font.draw(players[idx], width / 2, height + 10 + (idx * 20), 0, 1, 1, player_colours[idx])
+      player = players[idx]
+      font.draw(player.name + ' ' * (20-player.name.size) + '☃' * (pawns = player.available_pawns) + ('(%s)' % pawns), width / 2, height + 10 + (idx * 20), 0, 1, 1, player_colours[idx])
     end
   rescue OutOfTilesException
     puts "No more tiles available!" unless @game_ended
@@ -142,7 +148,7 @@ class GameWindow < Gosu::Window
     File.open(save_state_filename, "w") { |file| YAML.dump(save_state, file) }
     grid.draw_text
     print "Turn #{turn}"
-    print ", #{players[turn % players.size]}'s move: " if players.size>0
+    print ", #{players[turn % players.size].name}'s move: " if players.size>0
     print "\n"
   end
 

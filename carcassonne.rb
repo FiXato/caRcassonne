@@ -42,5 +42,7 @@ else
   puts @window.grid.to_yaml
 end
 @window.grid.draw_text
-@window.players = players
+players.each do |name|
+  @window.add_player(name)
+end
 @window.show
