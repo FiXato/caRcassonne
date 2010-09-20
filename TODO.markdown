@@ -13,16 +13,22 @@
 ## Phase 1: Create custom tileset
 
 * Create graphics that will be released under Creative-Commons Non-Commercial, Share-Alike, Attribution
-* Add TileEditor
+* Add TileSetEditor
   * Show all tiles from the default tileset
+  * Add Multiplier property
+  * Change property textfields to dropdowns
   * Select tiles to change their graphic and possibly properties
   * Allow adding tiles
   * Allow getting blank tiles from graphics in a directory
   * Allow saving TileSet to a packed TileSet YAML
-* Create Carcassonne Classic TileSet with aforementioned graphics
+* Create (8-bit) Carcassonne Classic TileSet with aforementioned graphics
 
 ## Phase 2: Tile & Meeple placement
 ******************************************************************************
+
+* Add Mouse support
+  * Right-click rotates
+  * Left-click places (look at TileSetEditor for working example code)
 
 * Add turns
 
