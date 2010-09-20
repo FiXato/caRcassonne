@@ -9,8 +9,18 @@ if ARGV.size > 0
 else
   tileset_name = 'Carcassonne-Classic'
 end
+
+print "Enter number of players: "
+players = []
+nr_of_players = gets.chomp.to_i
+nr_of_players.times do
+  print "Player #{players.size + 1}: "
+  players << gets.chomp
+end
+
 @savestate = YAML.load_file(ARGV.shift) if ARGV.size > 0
 @window = GameWindow.new("caRcassonne",800,800)
+
 @window.set_background("resources/backgrounds/grey_outline.png")
 if @savestate
   @window.tile_set = @savestate[:tile_set]
@@ -32,4 +42,5 @@ else
   puts @window.grid.to_yaml
 end
 @window.grid.draw_text
+@window.players = players
 @window.show

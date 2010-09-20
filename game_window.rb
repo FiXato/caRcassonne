@@ -2,16 +2,36 @@ require 'rubygems'
 require 'gosu'
 require "yaml"
 class GameWindow < Gosu::Window
-  attr_accessor :grid, :tile_width, :tile_height, :tile_set, :save_state_filename
-  attr_reader :width, :height
+  attr_accessor :grid, :tile_width, :tile_height, :tile_set, :save_state_filename, :players, :turn
+  attr_reader :width, :height, :player_colours
 
   def initialize(caption="Gosu Application",width=800,height=600)
-    super(width, height, false)
+    super(width, height + 200, false)
     @width = width
     @height = height
     self.caption = caption
     @save_state_filename = File.expand_path(File.join("savestates",Time.now.strftime("%Y%m%d%H%M%S")+".yaml"))
+    @players = []
     @ticks = 0
+    @turn = 0
+    @turn_text = Gosu::Font.new(self,'Verdana', 20)
+    @current_tile_texts = []
+    3.times{@current_tile_texts << Gosu::Font.new(self,File.expand_path("resources/FixedSysExcelsior300.ttf"), 40)}
+    @player_colours = [
+      0xffffffff,
+      0xffff0000,
+      0xff00ff00,
+      0xffffff00,
+      0xff00ffff,
+      0xffff00ff,
+      0xff888800,
+      0xff008888,
+      0xffff8c00
+    ]
+  end
+
+  def players_texts
+    @players_texts ||= players.map{Gosu::Font.new(self,File.expand_path("resources/FixedSysExcelsior300.ttf"), 20)}
   end
 
   def update
@@ -70,6 +90,11 @@ class GameWindow < Gosu::Window
     end
     grid.draw(self)
     draw_current_tile
+    text = "Turn #{turn}, #{players[turn % players.size]}'s move: " if players.size > 0
+    @turn_text.draw(text, 0, height + 10, 0, 1, 1, 0xffffffff)
+    players_texts.each_with_index do |font,idx|
+      font.draw(players[idx], width / 2, height + 10 + (idx * 20), 0, 1, 1, player_colours[idx])
+    end
   rescue OutOfTilesException
     puts "No more tiles available!" unless @game_ended
     end_game
@@ -79,6 +104,11 @@ class GameWindow < Gosu::Window
     x = current_tile[:grid_x] * tile_width + tile_width/2
     y = current_tile[:grid_y] * tile_height + tile_height/2
     current_tile[:image].draw_rot(x,y,0,current_tile[:tile].rotation) if current_tile
+    graphs = current_tile[:tile].to_graphs
+    colour = (players.size > 0 ? player_colours[turn % players.size] : 0xffff0000)
+    @current_tile_texts.each_with_index do |font,idx|
+      font.draw(graphs[idx].join('').gsub(' ','█').gsub('·', '⃞').gsub('#','❑'), 0, height + 30 + (idx * 40), 0, 1, 1, colour)
+    end
   end
   
   def set_background(filename)
@@ -104,12 +134,16 @@ class GameWindow < Gosu::Window
   end
 
   def end_turn
+    @turn += 1
     @current_tile = nil
     dup_grid = grid.dup
     dup_grid.tiles.each {|tile|tile[2].gosu_image = nil} #kill the gosu images, because they can't be imported.
     save_state = {:grid => dup_grid, :tile_set => tile_set}
     File.open(save_state_filename, "w") { |file| YAML.dump(save_state, file) }
     grid.draw_text
+    print "Turn #{turn}"
+    print ", #{players[turn % players.size]}'s move: " if players.size>0
+    print "\n"
   end
 
   def end_game

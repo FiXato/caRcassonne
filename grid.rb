@@ -15,7 +15,7 @@ class Grid
     empty = ' '
     print ' ' * 3
     (0..max_x).each do |x|
-      print ' %s ' % x.to_s(26)
+      print ' %s ' % (x + 10).to_s(26)
     end
     print "\n"
     (0..max_y).each do |y|
