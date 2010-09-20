@@ -28,25 +28,25 @@ class GameWindow < Gosu::Window
     if button_down? Gosu::Button::KbLeft or button_down? Gosu::Button::GpLeft then
       unless @current_tile[:grid_x] == 0
         @current_tile[:grid_x] -= 1 
-        puts @current_tile[:grid_x]
+        # puts @current_tile[:grid_x]
       end
     end
     if button_down? Gosu::Button::KbRight or button_down? Gosu::Button::GpRight then
       unless @current_tile[:grid_x] == @grid.max_x
         @current_tile[:grid_x] += 1
-        puts @current_tile[:grid_x]
+        # puts @current_tile[:grid_x]
       end
     end
     if button_down? Gosu::Button::KbDown or button_down? Gosu::Button::GpDown then
       unless @current_tile[:grid_y] == @grid.max_y
         @current_tile[:grid_y] += 1 
-        puts @current_tile[:grid_y]
+        # puts @current_tile[:grid_y]
       end
     end
     if button_down? Gosu::Button::KbUp or button_down? Gosu::Button::GpUp then
       unless @current_tile[:grid_y] == 0
         @current_tile[:grid_y] -= 1
-        puts @current_tile[:grid_y]
+        # puts @current_tile[:grid_y]
       end
     end
     if button_down? Gosu::Button::KbSpace or button_down? Gosu::Button::GpButton0 then
@@ -68,7 +68,7 @@ class GameWindow < Gosu::Window
       @current_tile = nil
     end
   rescue OutOfTilesException
-    puts "No more tiles available!"
+    puts "No more tiles available!" if @current_tile
     @current_tile = nil
   end
 
