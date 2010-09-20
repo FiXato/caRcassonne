@@ -17,6 +17,11 @@ class Grid
   end
   
   def draw_text
+    print ' ' * 3
+    (0..max_x).each do |x|
+      print ' %s ' % x.to_s(26)
+    end
+    print "\n"
     (0..max_y).each do |y|
       #get all graphics for this row
       graphs = (0..max_x).map do |x|
@@ -24,6 +29,8 @@ class Grid
       end
       #Print all graphs line by line.
       (0..2).each do |graph_line|
+        print (graph_line == 1 ? y : ' ')
+        print ' ' * 2
         graphs.each do |graph|
           print graph[graph_line]
         end
