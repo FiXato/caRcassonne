@@ -17,59 +17,43 @@ class GameWindow < Gosu::Window
   def update
     @ticks += 1
     return unless @ticks % 5 == 1
-    @current_tile ||= {
-      :tile => tile = tile_set.get_tile,
-      :image => Gosu::Image.new(self, tile.graphic, true),
-      :grid_x => 0,
-      :grid_y => 0,
-      :x => tile_width / 2,
-      :y => tile_height / 2,
-    }
     if button_down? Gosu::Button::KbLeft or button_down? Gosu::Button::GpLeft then
-      unless @current_tile[:grid_x] == 0
-        @current_tile[:grid_x] -= 1 
-        # puts @current_tile[:grid_x]
+      unless current_tile[:grid_x] == 0
+        current_tile[:grid_x] -= 1 
       end
     end
     if button_down? Gosu::Button::KbRight or button_down? Gosu::Button::GpRight then
-      unless @current_tile[:grid_x] == @grid.max_x
-        @current_tile[:grid_x] += 1
-        # puts @current_tile[:grid_x]
+      unless current_tile[:grid_x] == grid.max_x
+        current_tile[:grid_x] += 1
       end
     end
     if button_down? Gosu::Button::KbDown or button_down? Gosu::Button::GpDown then
-      unless @current_tile[:grid_y] == @grid.max_y
-        @current_tile[:grid_y] += 1 
-        # puts @current_tile[:grid_y]
+      unless current_tile[:grid_y] == grid.max_y
+        current_tile[:grid_y] += 1 
       end
     end
     if button_down? Gosu::Button::KbUp or button_down? Gosu::Button::GpUp then
-      unless @current_tile[:grid_y] == 0
-        @current_tile[:grid_y] -= 1
-        # puts @current_tile[:grid_y]
+      unless current_tile[:grid_y] == 0
+        current_tile[:grid_y] -= 1
       end
     end
-    if button_down? Gosu::Button::KbSpace or button_down? Gosu::Button::GpButton0 then
-      @current_tile[:tile].rotate_clockwise
+    if button_down? Gosu::Button::KbSpace or button_down? Gosu::Button::GpButton0 or button_down? Gosu::Button::MsRight then
+      current_tile[:tile].rotate_clockwise
     end
-    if button_down? Gosu::Button::KbReturn or button_down? Gosu::Button::GpButton1 then
-      puts 'Trying to place tile at %sx%s' % [@current_tile[:grid_x],@current_tile[:grid_y]]
-      if @grid.place_tile(@current_tile[:tile],@current_tile[:grid_x],@current_tile[:grid_y])
-        @current_tile = nil
-        dup_grid = @grid.dup
-        dup_grid.tiles.each {|tile|tile[2].gosu_image = nil} #kill the gosu images, because they can't be imported.
-        save_state = {:grid => dup_grid, :tile_set => @tile_set}
-        File.open(@save_state_filename, "w") { |file| YAML.dump(save_state, file) }
-        grid.draw_text
-      end
+    if button_down? Gosu::Button::KbReturn or button_down? Gosu::Button::GpButton1 or button_down? Gosu::Button::MsLeft then
+      puts 'Trying to place tile at %sx%s' % [current_tile[:grid_x],current_tile[:grid_y]]
+      end_turn if grid.place_tile(current_tile[:tile],current_tile[:grid_x],current_tile[:grid_y])
+    end
+    if button_down? Gosu::Button::KbS then
+      skip_tile
     end
     if button_down? Gosu::Button::KbBackspace or button_down? Gosu::Button::GpButton2 then
-      @tile_set.empty_tiles
-      @current_tile = nil
+      puts "Game was ended prematurely"
+      end_game
     end
   rescue OutOfTilesException
-    puts "No more tiles available!" if @current_tile
-    @current_tile = nil
+    puts "No more tiles available!" unless @game_ended
+    end_game
   end
 
   def draw
@@ -83,10 +67,49 @@ class GameWindow < Gosu::Window
       end
     end
     grid.draw(self)
-    @current_tile[:image].draw_rot(@current_tile[:grid_x] * tile_width + tile_width/2,@current_tile[:grid_y] * tile_height + tile_height/2,0,@current_tile[:tile].rotation) if @current_tile
+    current_tile[:image].draw_rot(current_tile[:grid_x] * tile_width + tile_width/2,current_tile[:grid_y] * tile_height + tile_height/2,0,current_tile[:tile].rotation) if current_tile
   end
   
   def set_background(filename)
     @background_image = Gosu::Image.new(self, filename, true)
+  end
+
+  def current_tile
+    @current_tile ||= {
+      :tile => tile = tile_set.get_tile,
+      :image => Gosu::Image.new(self, tile.graphic, true),
+      :grid_x => 0,
+      :grid_y => 0,
+      :x => tile_width / 2,
+      :y => tile_height / 2,
+    }
+  end
+
+  def end_turn
+    @current_tile = nil
+    dup_grid = grid.dup
+    dup_grid.tiles.each {|tile|tile[2].gosu_image = nil} #kill the gosu images, because they can't be imported.
+    save_state = {:grid => dup_grid, :tile_set => tile_set}
+    File.open(save_state_filename, "w") { |file| YAML.dump(save_state, file) }
+    grid.draw_text
+  end
+
+  def end_game
+    @tile_set.empty_tiles
+    @current_tile = nil
+    @game_ended = true
+  end
+
+  def button_down(id)
+    if id == Gosu::Button::KbEscape
+      close
+    end
+  end
+
+  #TODO: Add checks here to see if the tile is allowed to be skipped (not placeable tile)
+  def skip_tile
+    tile_set.shuffle_into_stack(@current_tile[:tile])
+    puts "Tile was skipped"
+    @current_tile = nil
   end
 end

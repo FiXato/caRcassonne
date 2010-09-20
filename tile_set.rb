@@ -79,6 +79,10 @@ class TileSet
     @shuffled_tiles = uniq_tiles
   end
 
+  def shuffle_into_stack(tile)
+    @shuffled_tiles = shuffled_tiles.push(tile).sort_by{rand}
+  end
+
   #TODO: Validate all tiles to make sure each side of every tile is specified
   def validate
     error = false
