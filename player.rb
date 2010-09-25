@@ -1,7 +1,7 @@
 require 'pawn'
 class Player
   attr_accessor :name, :points, :pawns
-  attr_reader :available_pawns
+  attr_reader :available_pawns, :placed_pawns
   def initialize(name)
     self.name = name
     self.points = 0
@@ -10,7 +10,16 @@ class Player
   end
 
   def update_available_pawns
-    pawn_groups = pawns.group_by{|pawn|pawn.position}
-    @available_pawns = pawn_groups.has_key?(:bag) ? pawn_groups[:bag].size : 0
+    @placed_pawns = pawns.select{|pawn|pawn.position == :board}
+    @available_pawns = pawns.select{|pawn|pawn.position == :bag}
+  end
+
+  def has_available_pawn?
+    available_pawns.size > 0
+  end
+
+  def get_available_pawn
+    return nil unless has_available_pawn?
+    available_pawns.first
   end
 end

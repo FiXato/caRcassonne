@@ -3,7 +3,7 @@ require 'gosu'
 require 'player'
 require "yaml"
 class GameWindow < Gosu::Window
-  attr_accessor :grid, :tile_width, :tile_height, :tile_set, :save_state_filename, :players, :turn
+  attr_accessor :grid, :tile_width, :tile_height, :tile_set, :save_state_filename, :players, :turn, :current_pawn, :phase
   attr_reader :width, :height, :player_colours
 
   def initialize(caption="Gosu Application",width=800,height=600)
@@ -29,6 +29,8 @@ class GameWindow < Gosu::Window
       0xff008888,
       0xffff8c00
     ]
+    @current_pawn = nil
+    @phase = :tile
   end
 
   def add_player(name)
@@ -42,37 +44,64 @@ class GameWindow < Gosu::Window
   def update
     @ticks += 1
     return unless @ticks % 5 == 1
-    if button_down? Gosu::Button::KbLeft or button_down? Gosu::Button::GpLeft then
-      unless current_tile[:grid_x] == 0
-        current_tile[:grid_x] -= 1 
+    if phase == :tile
+      if button_down? Gosu::Button::KbLeft or button_down? Gosu::Button::GpLeft then
+        unless current_tile[:grid_x] == 0
+          current_tile[:grid_x] -= 1 
+        end
       end
-    end
-    if button_down? Gosu::Button::KbRight or button_down? Gosu::Button::GpRight then
-      unless current_tile[:grid_x] == grid.max_x
-        current_tile[:grid_x] += 1
+      if button_down? Gosu::Button::KbRight or button_down? Gosu::Button::GpRight then
+        unless current_tile[:grid_x] == grid.max_x
+          current_tile[:grid_x] += 1
+        end
       end
-    end
-    if button_down? Gosu::Button::KbDown or button_down? Gosu::Button::GpDown then
-      unless current_tile[:grid_y] == grid.max_y
-        current_tile[:grid_y] += 1 
+      if button_down? Gosu::Button::KbDown or button_down? Gosu::Button::GpDown then
+        unless current_tile[:grid_y] == grid.max_y
+          current_tile[:grid_y] += 1 
+        end
       end
-    end
-    if button_down? Gosu::Button::KbUp or button_down? Gosu::Button::GpUp then
-      unless current_tile[:grid_y] == 0
-        current_tile[:grid_y] -= 1
+      if button_down? Gosu::Button::KbUp or button_down? Gosu::Button::GpUp then
+        unless current_tile[:grid_y] == 0
+          current_tile[:grid_y] -= 1
+        end
       end
-    end
-    if button_down? Gosu::Button::KbSpace or button_down? Gosu::Button::GpButton0 or button_down? Gosu::Button::MsRight then
-      current_tile[:tile].rotate_clockwise
-      puts "Rotated tile clockwise:"
-      current_tile[:tile].draw_graphs
-    end
-    if button_down? Gosu::Button::KbReturn or button_down? Gosu::Button::GpButton1 or button_down? Gosu::Button::MsLeft then
-      puts 'Trying to place tile at %sx%s' % [current_tile[:grid_x],current_tile[:grid_y]]
-      end_turn if grid.place_tile(current_tile[:tile],current_tile[:grid_x],current_tile[:grid_y])
-    end
-    if button_down? Gosu::Button::KbS then
-      skip_tile
+      if button_down? Gosu::Button::KbSpace or button_down? Gosu::Button::GpButton0 or button_down? Gosu::Button::MsRight then
+        current_tile[:tile].rotate_clockwise
+        puts "Rotated tile clockwise:"
+        current_tile[:tile].draw_graphs
+      end
+      if button_down? Gosu::Button::KbReturn or button_down? Gosu::Button::GpButton1 or button_down? Gosu::Button::MsLeft then
+        puts 'Trying to place tile at %sx%s' % [current_tile[:grid_x],current_tile[:grid_y]]
+        place_pawn_phase if grid.place_tile(current_tile[:tile],current_tile[:grid_x],current_tile[:grid_y])
+      end
+      if button_down? Gosu::Button::KbS then
+        skip_tile
+      end
+    elsif phase == :pawn
+      if button_down? Gosu::Button::KbLeft or button_down? Gosu::Button::GpLeft then
+        unless current_pawn.sub_grid_position[:x] == 0
+          current_pawn.sub_grid_position[:x] -= 1 
+        end
+      end
+      if button_down? Gosu::Button::KbRight or button_down? Gosu::Button::GpRight then
+        unless current_pawn.sub_grid_position[:x] == 2
+          current_pawn.sub_grid_position[:x] += 1
+        end
+      end
+      if button_down? Gosu::Button::KbDown or button_down? Gosu::Button::GpDown then
+        unless current_pawn.sub_grid_position[:y] == 2
+          current_pawn.sub_grid_position[:y] += 1
+        end
+      end
+      if button_down? Gosu::Button::KbUp or button_down? Gosu::Button::GpUp then
+        unless current_pawn.sub_grid_position[:y] == 0
+          current_pawn.sub_grid_position[:y] -= 1
+        end
+      end
+      if button_down? Gosu::Button::KbReturn or button_down? Gosu::Button::GpButton1 or button_down? Gosu::Button::MsLeft then
+        puts 'Trying to place pawn at %sx%s' % [current_pawn.sub_grid_position[:x],current_pawn.sub_grid_position[:y]]
+        end_turn# if current_player.place_pawn(current_pawn)
+      end
     end
     if button_down? Gosu::Button::KbBackspace or button_down? Gosu::Button::GpButton2 then
       puts "Game was ended prematurely"
@@ -95,11 +124,13 @@ class GameWindow < Gosu::Window
     end
     grid.draw(self)
     draw_current_tile
-    text = "Turn #{turn}, #{players[turn % players.size].name}'s move: " if players.size > 0
+    draw_current_pawn if current_pawn
+    players.each{|player|player.placed_pawns.each{|pawn|draw_pawn(pawn)}}
+    text = "Turn #{turn}, #{current_player.name}'s move: " if players.size > 0
     @turn_text.draw(text, 0, height + 10, 0, 1, 1, 0xffffffff)
     players_texts.each_with_index do |font,idx|
       player = players[idx]
-      font.draw(player.name + ' ' * (20-player.name.size) + '☃' * (pawns = player.available_pawns) + ('(%s)' % pawns), width / 2, height + 10 + (idx * 20), 0, 1, 1, player_colours[idx])
+      font.draw(player.name + ' ' * (20-player.name.size) + '☃' * (pawns = player.available_pawns.size) + ('(%s)' % pawns), width / 2, height + 10 + (idx * 20), 0, 1, 1, player_colours[idx])
     end
   rescue OutOfTilesException
     puts "No more tiles available!" unless @game_ended
@@ -116,7 +147,17 @@ class GameWindow < Gosu::Window
       font.draw(graphs[idx].join('').gsub(' ','█').gsub('·', '⃞').gsub('#','❑'), 0, height + 30 + (idx * 40), 0, 1, 1, colour)
     end
   end
-  
+
+  def draw_current_pawn
+    draw_pawn(current_pawn)
+  end
+
+  def draw_pawn(pawn)
+    x = (pawn.grid_position[:x] * tile_width) + (pawn.sub_grid_position[:x] * (tile_width/3))
+    y = (pawn.grid_position[:y] * tile_height) + (pawn.sub_grid_position[:y] * (tile_height/3))
+    pawn.image.draw(x,y,0)
+  end
+
   def set_background(filename)
     @background_image = Gosu::Image.new(self, filename, true)
   end
@@ -139,17 +180,37 @@ class GameWindow < Gosu::Window
     }
   end
 
+  def place_pawn
+    current_pawn.position = :board
+    current_player.update_available_pawns
+    @current_pawn = nil
+  end
+
+  def place_pawn_phase
+    @phase = :pawn
+    return end_turn unless @current_pawn = current_player.get_available_pawn
+    @current_pawn.image = Gosu::Image.new(self, File.expand_path(File.join('resources','pawn.png')), true)
+    @current_pawn.grid_position[:x] = @current_tile[:grid_x]
+    @current_pawn.grid_position[:y] = @current_tile[:grid_y]
+  end
+
   def end_turn
+    place_pawn if current_pawn
     @turn += 1
     @current_tile = nil
     dup_grid = grid.dup
     dup_grid.tiles.each {|tile|tile[2].gosu_image = nil} #kill the gosu images, because they can't be imported.
     save_state = {:grid => dup_grid, :tile_set => tile_set}
     File.open(save_state_filename, "w") { |file| YAML.dump(save_state, file) }
-    grid.draw_text
+    # grid.draw_text
     print "Turn #{turn}"
-    print ", #{players[turn % players.size].name}'s move: " if players.size>0
+    print ", #{current_player.name}'s move: " if players.size>0
     print "\n"
+    @phase = :tile
+  end
+
+  def current_player
+    players[turn % players.size]
   end
 
   def end_game
