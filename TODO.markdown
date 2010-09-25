@@ -34,6 +34,7 @@
 
   * Define players at startup
   * Switch current player at end of turn
+  * Add support for players in savestates
 
 * Add meeple placement
 * Add meeple placement checks
