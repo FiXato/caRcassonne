@@ -4,11 +4,14 @@ require 'tile'
 require 'tile_set'
 require 'grid'
 require 'game_window'
+
 if ARGV.size > 0
   tileset_name = ARGV.shift
 else
   tileset_name = 'Carcassonne-Classic'
 end
+
+@savestate = YAML.load_file(ARGV.shift) if ARGV.size > 0
 
 print "Enter number of players: "
 players = []
@@ -18,7 +21,6 @@ nr_of_players.times do
   players << gets.chomp
 end
 
-@savestate = YAML.load_file(ARGV.shift) if ARGV.size > 0
 @window = GameWindow.new("caRcassonne",800,800)
 
 @window.set_background("resources/backgrounds/grey_outline.png")
