@@ -35,12 +35,17 @@ class Grid
     end
   end
 
+  def merge_roads(tile)
+  end
+
   def place_starting_tile
     place_tile!(starting_tile,max_x/2,max_y/2) if starting_tile
   end
 
   # Place tile without checking if it is a valid tile position
   def place_tile!(tile,x,y)
+    tile.determine_roads(x,y)
+    merge_roads(tile)
     self.tiles << [x,y,tile]
   end
 

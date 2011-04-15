@@ -20,7 +20,8 @@ class Tile
   :graphic, :graphic_packed, :gosu_image, 
   :rotation, :multiplier, 
   :dimensions, 
-  :pawn, :sub_grid
+  :pawn, :sub_grid,
+  :roads
 
   def initialize(type=nil,graphic=nil)
     self.type = type
@@ -185,5 +186,21 @@ class Tile
     @sub_grid[2] = [:meadow,:road,:meadow] if south == [:meadow,:road]
     @sub_grid[2] = [:meadow,:meadow,:meadow] if south == [:meadow]
     @sub_grid
+  end
+
+  def determine_roads(x,y)
+    @roads = []
+    road = nil
+    if sub_grid[0].road?
+      road = Road.new
+      road.grid_coords = [x,y]
+      road.sub_grid_coords = []
+      sub_grid[0].each_with_index do |sub_grid_type,idx|
+        road.sub_grid_coords
+      end
+      if sub_grid[1][1] == :road
+    end
+      
+    
   end
 end
