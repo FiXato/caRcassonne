@@ -212,6 +212,10 @@ class GameWindow < Gosu::Window
         current_pawn.sub_grid_position[:y] += 1 unless current_pawn.sub_grid_position[:y] == 2
       when Gosu::Button::KbUp, Gosu::Button::GpUp
         current_pawn.sub_grid_position[:y] -= 1 unless current_pawn.sub_grid_position[:y] == 0
+      when Gosu::Button::KbSpace, Gosu::Button::GpButton0, Gosu::Button::MsRight
+        puts "Skipping pawn placement."
+        @current_pawn = nil
+        end_turn
       when Gosu::Button::KbReturn, Gosu::Button::GpButton1, Gosu::Button::MsLeft
         puts 'Trying to place pawn at %sx%s' % [current_pawn.sub_grid_position[:x],current_pawn.sub_grid_position[:y]]
         end_turn# if current_player.place_pawn(current_pawn)
