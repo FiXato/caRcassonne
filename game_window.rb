@@ -52,6 +52,35 @@ class GameWindow < Gosu::Window
   # end
 
   def draw
+    draw_background
+    grid.draw(self)
+    draw_pawns
+    draw_status_texts
+    draw_current_pawn if current_pawn
+    draw_current_tile
+  rescue OutOfTilesException
+    puts "No more tiles available!" unless @game_ended
+    end_game
+  end
+
+  def draw_status_texts
+    text = "Turn #{turn}, #{current_player.name}'s move: " if players.size > 0
+    @turn_text.draw(text, 0, height + 10, ZORDER[:text], 1, 1, 0xffffffff)
+    players_texts.each_with_index do |font,idx|
+      player = players[idx]
+      font.draw(player.name + ' ' * (20-player.name.size) + '☃' * (pawns = player.available_pawns.size) + ('(%s)' % pawns), width / 2, height + 10 + (idx * 20), ZORDER[:text], 1, 1, player_colours[idx])
+    end
+  end
+
+  def draw_pawns
+    players.each do |player|
+      player.placed_pawns.each do |pawn|
+        draw_pawn(pawn)
+      end
+    end
+  end
+
+  def draw_background
     if @background_image
       (0..(@width/tile_width)).each do |x_index|
         offset_x = x_index * tile_width
@@ -61,19 +90,6 @@ class GameWindow < Gosu::Window
         end
       end
     end
-    grid.draw(self)
-    players.each{|player|player.placed_pawns.each{|pawn|draw_pawn(pawn)}}
-    text = "Turn #{turn}, #{current_player.name}'s move: " if players.size > 0
-    @turn_text.draw(text, 0, height + 10, ZORDER[:text], 1, 1, 0xffffffff)
-    players_texts.each_with_index do |font,idx|
-      player = players[idx]
-      font.draw(player.name + ' ' * (20-player.name.size) + '☃' * (pawns = player.available_pawns.size) + ('(%s)' % pawns), width / 2, height + 10 + (idx * 20), ZORDER[:text], 1, 1, player_colours[idx])
-    end
-    draw_current_pawn if current_pawn
-    draw_current_tile
-  rescue OutOfTilesException
-    puts "No more tiles available!" unless @game_ended
-    end_game
   end
 
   def draw_current_tile
