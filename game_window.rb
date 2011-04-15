@@ -144,7 +144,10 @@ class GameWindow < Gosu::Window
 
   def place_pawn_phase
     @phase = :pawn
-    return end_turn unless @current_pawn = current_player.get_available_pawn
+    unless @current_pawn = current_player.get_available_pawn
+      puts "Player #{current_player.name} has not available pawns."
+      return end_turn
+    end
     @current_pawn.image = Gosu::Image.new(self, File.expand_path(File.join('resources','pawn.png')), true)
     @current_pawn.grid_position[:x] = @current_tile[:grid_x]
     @current_pawn.grid_position[:y] = @current_tile[:grid_y]
@@ -198,7 +201,9 @@ class GameWindow < Gosu::Window
         puts current_tile[:tile].sub_grid.map{|l|l.join(", ")}.join("\n")
       when Gosu::Button::KbReturn, Gosu::Button::GpButton1, Gosu::Button::MsLeft
         puts 'Trying to place tile at %sx%s' % [current_tile[:grid_x],current_tile[:grid_y]]
-        place_pawn_phase if grid.place_tile(current_tile[:tile],current_tile[:grid_x],current_tile[:grid_y])
+        if grid.place_tile(current_tile[:tile],current_tile[:grid_x],current_tile[:grid_y])
+          place_pawn_phase
+        end
       when Gosu::Button::KbS
         skip_tile
       end
