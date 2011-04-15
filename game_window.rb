@@ -220,10 +220,11 @@ class GameWindow < Gosu::Window
   end
 
   def save_state
-    dup_grid = grid.dup
-    dup_grid.tiles.each {|tile|tile[2].gosu_image = nil} #kill the gosu images, because they can't be imported.
-    save_state = {:grid => dup_grid, :tile_set => tile_set}
-    File.open(save_state_filename, "w") { |file| YAML.dump(save_state, file) }
+    # Disabled for now till the to-be-saved/restored information is a bit more clear/stable.
+    # dup_grid = grid.dup
+    # dup_grid.tiles.each {|tile|tile[2].gosu_image = nil} #kill the gosu images, because they can't be imported.
+    # save_state = {:grid => dup_grid, :tile_set => tile_set}
+    # File.open(save_state_filename, "w") { |file| YAML.dump(save_state, file) }
   end
 
   #TODO: Add checks here to see if the tile is allowed to be skipped (not placeable tile)
