@@ -154,10 +154,7 @@ class GameWindow < Gosu::Window
     place_pawn if current_pawn
     @turn += 1
     @current_tile = nil
-    dup_grid = grid.dup
-    dup_grid.tiles.each {|tile|tile[2].gosu_image = nil} #kill the gosu images, because they can't be imported.
-    save_state = {:grid => dup_grid, :tile_set => tile_set}
-    File.open(save_state_filename, "w") { |file| YAML.dump(save_state, file) }
+    save_state
     grid.draw_text
     print "Turn #{turn}"
     print ", #{current_player.name}'s move: " if players.size>0
@@ -220,6 +217,13 @@ class GameWindow < Gosu::Window
         end_turn# if current_player.place_pawn(current_pawn)
       end
     end
+  end
+
+  def save_state
+    dup_grid = grid.dup
+    dup_grid.tiles.each {|tile|tile[2].gosu_image = nil} #kill the gosu images, because they can't be imported.
+    save_state = {:grid => dup_grid, :tile_set => tile_set}
+    File.open(save_state_filename, "w") { |file| YAML.dump(save_state, file) }
   end
 
   #TODO: Add checks here to see if the tile is allowed to be skipped (not placeable tile)
