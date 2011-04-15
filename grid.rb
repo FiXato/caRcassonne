@@ -28,7 +28,7 @@ class Grid
         print (graph_line == 1 ? y : ' ')
         print ' ' * 2
         graphs.each do |graph|
-          print graph[graph_line]
+          print graph[graph_line].join('')
         end
         print "\n"
       end
