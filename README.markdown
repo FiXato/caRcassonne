@@ -5,6 +5,9 @@ and basic tile sets of the [Carcassonne Boardgame][1] and possibly expansion
 sets. Eventually this client might be forked into a generic tile-based 
 boardgame generator/client.
 
+## Discontinuation notice
+While I still hope to create my own Carcassonne game some day, it'll likely be a complete rewrite as I have no idea where I left off with this repo. Thus, this repository is no longer maintained, and will be archived.
+
 
 ## Installation Guidelines
 ******************************************************************************
